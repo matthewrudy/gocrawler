@@ -52,3 +52,9 @@ func (s *Scraper) Scrape(req Request) Result {
 		Page:    page,
 	}
 }
+
+func ScrapeUri(uri string) Result {
+	scraper := New()
+	request := NewRequest(uri)
+	return scraper.Scrape(request)
+}
