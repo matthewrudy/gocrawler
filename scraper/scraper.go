@@ -18,7 +18,7 @@ type Request struct {
 	Depth int
 }
 
-func (s *Scraper) NewRequest(uri string) Request {
+func NewRequest(uri string) Request {
 	return Request{
 		Uri: uri,
 	}

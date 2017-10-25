@@ -15,9 +15,11 @@ func New(entrypoint string) Crawler {
 }
 
 func (c *Crawler) Crawl() {
-	scraper := scraper.New()
+	worker := scraper.New()
+
 	request := scraper.NewRequest(c.entrypoint)
-	result := scraper.Scrape(request)
+	result := worker.Scrape(request)
+
 	fmt.Println("Crawl complete")
 	fmt.Println("Result for", c.entrypoint, result)
 }
