@@ -1,5 +1,11 @@
 package scraper
 
+import (
+	"fmt"
+	"net/http"
+	"strings"
+)
+
 type Scraper struct {
 }
 
@@ -45,12 +51,44 @@ type Page struct {
 	Assets []string
 }
 
-func (s *Scraper) Scrape(req Request) Result {
-	page := Page{}
-	return Result{
-		Request: req,
-		Page:    page,
+func NewPage() Page {
+	return Page{
+		Links:  make([]string, 0),
+		Assets: make([]string, 0),
 	}
+}
+
+func (s *Scraper) Scrape(req Request) Result {
+	// default to a non-retriable failure, with empty result
+	result := Result{
+		Success:   false,
+		Retriable: false,
+		Page:      NewPage(),
+	}
+
+	resp, err := http.Get(req.Uri)
+
+	if err != nil {
+		// return fmt.Fatalf("err")
+		fmt.Println("Error", err)
+		return result
+	}
+
+	// TODO: handle more codes
+	switch resp.StatusCode {
+	case 200, 204:
+		result.Success = true
+	case 429, 500, 502, 503, 504:
+		result.Retriable = true
+	}
+
+	contentType := resp.Header.Get(http.CanonicalHeaderKey("Content-Type"))
+	if strings.HasPrefix(contentType, "text/html") {
+		parser := NewParser()
+		result.Page = parser.Parse(resp.Body)
+	}
+
+	return result
 }
 
 func ScrapeUri(uri string) Result {

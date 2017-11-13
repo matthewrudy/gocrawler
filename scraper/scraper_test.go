@@ -22,7 +22,7 @@ func TestScraper_Scrape(t *testing.T) {
 			name:      "success",
 			path:      "/",
 			success:   true,
-			retriable: true,
+			retriable: false, // ignore
 			links:     []string{"/other.html"},
 			assets:    []string{"/spacer.gif"},
 		},
@@ -40,9 +40,9 @@ func TestScraper_Scrape(t *testing.T) {
 			name:      "gif",
 			path:      "/spacer.gif",
 			success:   true,
-			retriable: true,
+			retriable: false, // ignore
 			links:     []string{},
-			assets:    []string{"/spacer.gif"},
+			assets:    []string{},
 		},
 	}
 
@@ -55,21 +55,21 @@ func TestScraper_Scrape(t *testing.T) {
 			result := ScrapeUri(ts.URL + tt.path)
 
 			if result.Success != tt.success {
-				t.Errorf("success not as expected: %v", result.Success)
+				t.Errorf("success: %v, expected: %v", result.Success, tt.success)
 			}
 
 			if result.Retriable != tt.retriable {
-				t.Errorf("success not as expected: %v", result.Success)
+				t.Errorf("retriable: %v, expected: %v", result.Retriable, tt.retriable)
 			}
 
 			page := result.Page
 
 			if !reflect.DeepEqual(page.Assets, tt.assets) {
-				t.Errorf("assets not as expected: %v", page.Assets)
+				t.Errorf("assets: %v, expected: %v", page.Assets, tt.assets)
 			}
 
 			if !reflect.DeepEqual(page.Links, tt.links) {
-				t.Errorf("links not as expected: %v", page.Links)
+				t.Errorf("links: %v, expected: %v", page.Links, tt.links)
 			}
 		})
 	}
