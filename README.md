@@ -13,6 +13,7 @@ Planned features:
 Missing features:
 
 * [ ] Respect robots.txt
-* [ ] Backoff
+* [ ] Look for Sitemap in robots.txt
+* [ ] Backoff Retries
 * [ ] Render javascript (chrome headless?)
 * [ ] Extract assets added by CSS
