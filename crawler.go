@@ -13,6 +13,8 @@ type Crawler struct {
 	entrypoint string                    // the first uri to try
 	attempts   map[string]int            // avoid duplicating effort
 	Results    map[string]scraper.Result // the results
+
+	wg sync.WaitGroup
 }
 
 func (c Crawler) String() string {
@@ -41,18 +43,16 @@ func (c *Crawler) Crawl() {
 	requests := make(chan scraper.Request)
 	results := make(chan scraper.Result, 100)
 
-	var wg sync.WaitGroup
-
 	for w := 1; w <= workerCount; w++ {
 		go worker(requests, results)
 	}
 
 	requests <- scraper.NewRequest(c.entrypoint)
-	wg.Add(1)
+	c.wg.Add(1)
 
-	go manager(c, requests, results, &wg)
+	go manager(c, requests, results)
 
-	wg.Wait()
+	c.wg.Wait()
 }
 
 func worker(requests <-chan scraper.Request, results chan<- scraper.Result) {
@@ -62,7 +62,7 @@ func worker(requests <-chan scraper.Request, results chan<- scraper.Result) {
 	}
 }
 
-func manager(c *Crawler, requests chan<- scraper.Request, results <-chan scraper.Result, wg *sync.WaitGroup) {
+func manager(c *Crawler, requests chan<- scraper.Request, results <-chan scraper.Result) {
 	attempts := make(map[string]int)
 
 	for r := range results {
@@ -75,7 +75,7 @@ func manager(c *Crawler, requests chan<- scraper.Request, results <-chan scraper
 				if attempts[link] < 1 {
 					attempts[link] = 1
 					requests <- scraper.NewRequest(link)
-					wg.Add(1)
+					c.wg.Add(1)
 				}
 			}
 		} else if r.Retriable && attempts[r.Request.Uri] < maxAttempts {
@@ -83,10 +83,10 @@ func manager(c *Crawler, requests chan<- scraper.Request, results <-chan scraper
 			// re-enqueue
 			attempts[r.Request.Uri] += 1
 			requests <- scraper.NewRequest(r.Request.Uri)
-			wg.Add(1)
+			c.wg.Add(1)
 		} else {
 			fmt.Println("failed:", r.Request.Uri)
 		}
-		wg.Done()
+		c.wg.Done()
 	}
 }
