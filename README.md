@@ -3,11 +3,11 @@
 Implemented features:
 
 * [x] Static HTML parser
+* [x] Retries
+* [x] Parallel
 
 Planned features:
 
-* [ ] Retries
-* [ ] Parallel
 * [ ] Maximum Depth
 
 Missing features:
