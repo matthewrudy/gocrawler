@@ -33,14 +33,16 @@ func (p *Parser) Parse(body io.Reader, page *Page, uri string) {
 		// try to find an <a href=X>
 		link := extractAttrFromTag(t, "a", "href")
 		if len(link) > 0 {
-			link = ExpandUri(link, uri)
-			page.Links = append(page.Links, link)
+			link = ExpandLink(link, uri)
+			if IsLocalLink(link, uri) {
+				page.Links = append(page.Links, link)
+			}
 		}
 
 		// try to find an <img src=Y>
 		asset := extractAttrFromTag(t, "img", "src")
 		if len(asset) > 0 {
-			asset = ExpandUri(asset, uri)
+			asset = ExpandLink(asset, uri)
 			page.Assets = append(page.Assets, asset)
 		}
 

@@ -7,7 +7,7 @@ import (
 )
 
 // On a given page, resolve a canonical url for a provided link
-func ExpandUri(link, uri string) string {
+func ExpandLink(link, uri string) string {
 	current, err := url.Parse(uri)
 
 	if err != nil {
@@ -32,4 +32,18 @@ func ExpandUri(link, uri string) string {
 	}
 
 	return parsed.String()
+}
+
+func IsLocalLink(link, current string) bool {
+	currentURI, err := url.Parse(current)
+	if err != nil {
+		return false
+	}
+
+	linkURI, err := url.Parse(link)
+	if err != nil {
+		return false
+	}
+
+	return currentURI.Host == linkURI.Host
 }
