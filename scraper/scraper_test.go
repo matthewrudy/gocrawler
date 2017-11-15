@@ -8,6 +8,10 @@ import (
 )
 
 func TestScraper_Scrape(t *testing.T) {
+	fs := http.FileServer(http.Dir("../testing/simple"))
+	ts := httptest.NewServer(fs)
+	defer ts.Close()
+
 	tests := []struct {
 		name string
 		path string
@@ -23,8 +27,8 @@ func TestScraper_Scrape(t *testing.T) {
 			path:      "/",
 			success:   true,
 			retriable: false, // ignore
-			links:     []string{"/other.html"},
-			assets:    []string{"/spacer.gif"},
+			links:     []string{ts.URL + "/other.html"},
+			assets:    []string{ts.URL + "/spacer.gif"},
 		},
 
 		{
@@ -45,10 +49,6 @@ func TestScraper_Scrape(t *testing.T) {
 			assets:    []string{},
 		},
 	}
-
-	fs := http.FileServer(http.Dir("../testing/simple"))
-	ts := httptest.NewServer(fs)
-	defer ts.Close()
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

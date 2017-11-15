@@ -19,15 +19,15 @@ func Test_Parser_Parse(t *testing.T) {
 				"http://www.gravatar.com/avatar/c833be5582482777b51b8fc73e8b0586?s=128&d=identicon&r=PG",
 			},
 			links: []string{
-				"/",
-				"/about",
-				"/archive",
-				"/random",
+				"https://example.com/",
+				"https://example.com/about",
+				"https://example.com/archive",
+				"https://example.com/random",
 				"http://tomblomfield.com/rss",
 				"http://t.umblr.com/redirect?z=https%3A%2F%2Fgetmondo.co.uk&t=NmI5ZTYxZjkzZDk5ZDUxMjY2NGYxMjMzMGY1ZjNkODNhZWNjYWRjYSxUbU4zdWpESg%3D%3D&p=&m=0",
 				"http://t.umblr.com/redirect?z=https%3A%2F%2Fgocardless.com&t=NzQ5N2NlMmU4ZjZkMjk2MjFhNzQ0Yjg0MTY2ZGMxMjI2MGQyMDIyOSxUbU4zdWpESg%3D%3D&p=&m=0",
 				"http://t.umblr.com/redirect?z=https%3A%2F%2Fgithub.com%2Ftomblomfield&t=MzYzOTBhOGJhYWViYjVlOTFjNTBlZDQ2OTBkNTdkMGEwNzM0ZTFkOCxUbU4zdWpESg%3D%3D&p=&m=0",
-				"http://tomblomfield.com",
+				"http://tomblomfield.com/",
 				"https://twitter.com/t_blom",
 				"http://www.tumblr.com/",
 			},
@@ -37,10 +37,10 @@ func Test_Parser_Parse(t *testing.T) {
 			name: "simple example",
 			file: "testing/simple/index.html",
 			assets: []string{
-				"/spacer.gif",
+				"https://example.com/spacer.gif",
 			},
 			links: []string{
-				"/other.html",
+				"https://example.com/other.html",
 			},
 		},
 
@@ -49,9 +49,9 @@ func Test_Parser_Parse(t *testing.T) {
 			file:   "testing/simple/other.html",
 			assets: []string{},
 			links: []string{
-				"/",
-				"http://google.com", // external
-				"/spacer.gif",       // asset
+				"https://example.com/",
+				"http://google.com/",             // external
+				"https://example.com/spacer.gif", // asset
 			},
 		},
 	}
@@ -64,14 +64,15 @@ func Test_Parser_Parse(t *testing.T) {
 			defer file.Close()
 
 			parser := NewParser()
+			page := NewPage()
 
-			page := parser.Parse(file)
+			parser.Parse(file, &page, "https://example.com/some/path")
 			if !reflect.DeepEqual(page.Assets, tt.assets) {
-				t.Errorf("assets not as expected: %v", page.Assets)
+				t.Errorf("assets not as expected: %v, actual: %v", tt.assets, page.Assets)
 			}
 
 			if !reflect.DeepEqual(page.Links, tt.links) {
-				t.Errorf("links not as expected: %v", page.Links)
+				t.Errorf("links not as expected: %v, actual: %v", tt.links, page.Links)
 			}
 		})
 	}

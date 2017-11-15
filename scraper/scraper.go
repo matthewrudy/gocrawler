@@ -85,7 +85,7 @@ func (s *Scraper) Scrape(req Request) Result {
 	contentType := resp.Header.Get(http.CanonicalHeaderKey("Content-Type"))
 	if strings.HasPrefix(contentType, "text/html") {
 		parser := NewParser()
-		result.Page = parser.Parse(resp.Body)
+		parser.Parse(resp.Body, &result.Page, req.Uri)
 	}
 
 	return result

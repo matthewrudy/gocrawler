@@ -12,10 +12,8 @@ func NewParser() Parser {
 	return Parser{}
 }
 
-func (p *Parser) Parse(body io.Reader) Page {
+func (p *Parser) Parse(body io.Reader, page *Page, uri string) {
 	z := html.NewTokenizer(body)
-
-	page := NewPage()
 
 	for {
 		tt := z.Next()
@@ -35,18 +33,18 @@ func (p *Parser) Parse(body io.Reader) Page {
 		// try to find an <a href=X>
 		link := extractAttrFromTag(t, "a", "href")
 		if len(link) > 0 {
+			link = ExpandUri(link, uri)
 			page.Links = append(page.Links, link)
 		}
 
 		// try to find an <img src=Y>
 		asset := extractAttrFromTag(t, "img", "src")
 		if len(asset) > 0 {
+			asset = ExpandUri(asset, uri)
 			page.Assets = append(page.Assets, asset)
 		}
 
 	}
-
-	return page
 }
 
 func extractAttrFromTag(t html.Token, tag, attr string) string {
