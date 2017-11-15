@@ -7,7 +7,7 @@ import (
 	"github.com/matthewrudy/gocrawler"
 )
 
-var entrypoint = flag.String("entrypoint", "http://tomblomfield.com", "entrypoint to crawl from")
+var entrypoint = flag.String("entrypoint", "http://tomblomfield.com/", "entrypoint to crawl from")
 
 func init() {
 	flag.Parse()

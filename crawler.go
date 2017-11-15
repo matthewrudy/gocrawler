@@ -1,6 +1,7 @@
 package gocrawler
 
 import (
+	"fmt"
 	"sort"
 	"strings"
 	"sync"
@@ -31,13 +32,18 @@ func New(entrypoint string) Crawler {
 	}
 }
 
+const (
+	workerCount = 10
+	maxAttempts = 1
+)
+
 func (c *Crawler) Crawl() {
-	requests := make(chan scraper.Request, 100)
+	requests := make(chan scraper.Request)
 	results := make(chan scraper.Result, 100)
 
 	var wg sync.WaitGroup
 
-	for w := 1; w <= 10; w++ {
+	for w := 1; w <= workerCount; w++ {
 		go worker(requests, results)
 	}
 
@@ -61,6 +67,7 @@ func manager(c *Crawler, requests chan<- scraper.Request, results <-chan scraper
 
 	for r := range results {
 		if r.Success {
+			fmt.Println("success:", r.Request.Uri)
 			// store the result
 			c.Results[r.Request.Uri] = r
 
@@ -71,6 +78,14 @@ func manager(c *Crawler, requests chan<- scraper.Request, results <-chan scraper
 					wg.Add(1)
 				}
 			}
+		} else if r.Retriable && attempts[r.Request.Uri] < maxAttempts {
+			fmt.Println("retry:", r.Request.Uri)
+			// re-enqueue
+			attempts[r.Request.Uri] += 1
+			requests <- scraper.NewRequest(r.Request.Uri)
+			wg.Add(1)
+		} else {
+			fmt.Println("failed:", r.Request.Uri)
 		}
 		wg.Done()
 	}
