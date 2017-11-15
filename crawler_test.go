@@ -23,12 +23,6 @@ func TestCrawler_Crawl(t *testing.T) {
 		assets []string
 	}{
 		{
-			uri:    ts.URL,
-			assets: []string{ts.URL + "/spacer.gif"},
-		},
-
-		// TODO: remove this dupe
-		{
 			uri:    ts.URL + "/",
 			assets: []string{ts.URL + "/spacer.gif"},
 		},

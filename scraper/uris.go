@@ -22,7 +22,11 @@ func ExpandLink(link, uri string) string {
 		link = fmt.Sprintf("%s://%s%s", current.Scheme, current.Host, link)
 	}
 
-	parsed, err := url.Parse(link)
+	return CanonicalizeURI(link)
+}
+
+func CanonicalizeURI(uri string) string {
+	parsed, err := url.Parse(uri)
 	if err != nil {
 		return ""
 	}

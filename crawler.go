@@ -58,6 +58,8 @@ func (c *Crawler) Crawl() {
 }
 
 func (c *Crawler) enqueueURI(uri string) {
+	uri = scraper.CanonicalizeURI(uri)
+
 	if c.attempts[uri] > 0 {
 		return
 	}
