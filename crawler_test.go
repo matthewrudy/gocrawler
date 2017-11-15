@@ -9,7 +9,7 @@ import (
 )
 
 func TestCrawler_Crawl(t *testing.T) {
-	handler := simple.Handler()
+	handler := simple.Handler("testing/simple")
 	ts := httptest.NewServer(handler)
 	defer ts.Close()
 
