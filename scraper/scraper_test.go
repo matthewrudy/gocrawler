@@ -42,6 +42,15 @@ func TestScraper_Scrape(t *testing.T) {
 		},
 
 		{
+			name:      "500",
+			path:      "/error",
+			success:   false,
+			retriable: true,
+			links:     []string{},
+			assets:    []string{},
+		},
+
+		{
 			name:      "gif",
 			path:      "/spacer.gif",
 			success:   true,
