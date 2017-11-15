@@ -14,7 +14,8 @@ type Crawler struct {
 	attempts   map[string]int            // avoid duplicating effort
 	Results    map[string]scraper.Result // the results
 
-	wg sync.WaitGroup
+	queue chan scraper.Request
+	wg    sync.WaitGroup
 }
 
 func (c Crawler) String() string {
@@ -31,6 +32,8 @@ func New(entrypoint string) Crawler {
 		entrypoint: entrypoint,
 		attempts:   make(map[string]int),
 		Results:    make(map[string]scraper.Result, 0),
+
+		queue: make(chan scraper.Request),
 	}
 }
 
@@ -39,32 +42,45 @@ const (
 	maxAttempts = 1
 )
 
+// Crawl the provided site, beginning with the entrypoint
 func (c *Crawler) Crawl() {
-	requests := make(chan scraper.Request)
 	results := make(chan scraper.Result, 100)
 
 	for w := 1; w <= workerCount; w++ {
-		go worker(requests, results)
+		go worker(c, results)
 	}
 
-	requests <- scraper.NewRequest(c.entrypoint)
-	c.wg.Add(1)
+	c.enqueueURI(c.entrypoint)
 
-	go manager(c, requests, results)
+	go manager(c, results)
 
 	c.wg.Wait()
 }
 
-func worker(requests <-chan scraper.Request, results chan<- scraper.Result) {
+func (c *Crawler) enqueueURI(uri string) {
+	if c.attempts[uri] > 0 {
+		return
+	}
+	c.retryURI(uri)
+}
+
+func (c *Crawler) retryURI(uri string) {
+	if c.attempts[uri] >= maxAttempts {
+		return
+	}
+	c.attempts[uri]++
+	c.queue <- scraper.NewRequest(uri)
+	c.wg.Add(1)
+}
+
+func worker(c *Crawler, results chan<- scraper.Result) {
 	worker := scraper.New()
-	for req := range requests {
+	for req := range c.queue {
 		results <- worker.Scrape(req)
 	}
 }
 
-func manager(c *Crawler, requests chan<- scraper.Request, results <-chan scraper.Result) {
-	attempts := make(map[string]int)
-
+func manager(c *Crawler, results <-chan scraper.Result) {
 	for r := range results {
 		if r.Success {
 			fmt.Println("success:", r.Request.Uri)
@@ -72,18 +88,11 @@ func manager(c *Crawler, requests chan<- scraper.Request, results <-chan scraper
 			c.Results[r.Request.Uri] = r
 
 			for _, link := range r.Page.Links {
-				if attempts[link] < 1 {
-					attempts[link] = 1
-					requests <- scraper.NewRequest(link)
-					c.wg.Add(1)
-				}
+				c.enqueueURI(link)
 			}
-		} else if r.Retriable && attempts[r.Request.Uri] < maxAttempts {
+		} else if r.Retriable {
 			fmt.Println("retry:", r.Request.Uri)
-			// re-enqueue
-			attempts[r.Request.Uri] += 1
-			requests <- scraper.NewRequest(r.Request.Uri)
-			c.wg.Add(1)
+			c.retryURI(r.Request.Uri)
 		} else {
 			fmt.Println("failed:", r.Request.Uri)
 		}
