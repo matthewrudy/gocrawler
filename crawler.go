@@ -39,7 +39,7 @@ func New(entrypoint string) Crawler {
 
 const (
 	workerCount = 10
-	maxAttempts = 1
+	maxAttempts = 2
 )
 
 // Crawl the provided site, beginning with the entrypoint

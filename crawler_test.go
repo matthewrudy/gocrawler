@@ -37,6 +37,11 @@ func TestCrawler_Crawl(t *testing.T) {
 			uri:    ts.URL + "/spacer.gif",
 			assets: []string{},
 		},
+
+		{
+			uri:    ts.URL + "/eventually",
+			assets: []string{"http://example.com/eventually/worked"},
+		},
 	}
 
 	if len(crawler.Results) != len(tests) {

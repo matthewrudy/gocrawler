@@ -56,6 +56,7 @@ func Test_Parser_Parse(t *testing.T) {
 				"https://example.com/",
 				// "http://google.com/",             // external
 				"https://example.com/spacer.gif", // asset
+				"https://example.com/eventually",
 			},
 		},
 	}
