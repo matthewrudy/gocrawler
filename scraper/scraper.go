@@ -44,6 +44,15 @@ type Result struct {
 	Page Page
 }
 
+// Pretty print the result
+func (r Result) String() string {
+	str := r.Request.Uri
+	for _, asset := range r.Page.Assets {
+		str += "\n - " + asset
+	}
+	return str
+}
+
 // Page represents a parsed page
 // with the assets and links extracted
 type Page struct {
@@ -61,6 +70,7 @@ func NewPage() Page {
 func (s *Scraper) Scrape(req Request) Result {
 	// default to a non-retriable failure, with empty result
 	result := Result{
+		Request:   req,
 		Success:   false,
 		Retriable: false,
 		Page:      NewPage(),

@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 
 	"github.com/matthewrudy/gocrawler"
 )
@@ -14,5 +15,6 @@ func init() {
 
 func main() {
 	crawler := gocrawler.New(*entrypoint)
-	crawler.Crawl()
+	result := crawler.Crawl()
+	fmt.Println(result)
 }

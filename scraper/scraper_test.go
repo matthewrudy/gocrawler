@@ -52,7 +52,12 @@ func TestScraper_Scrape(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := ScrapeUri(ts.URL + tt.path)
+			uri := ts.URL + tt.path
+			result := ScrapeUri(uri)
+
+			if result.Request.Uri != uri {
+				t.Fatalf("expected uri to be echoed")
+			}
 
 			if result.Success != tt.success {
 				t.Errorf("success: %v, expected: %v", result.Success, tt.success)

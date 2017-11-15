@@ -1,8 +1,6 @@
 package gocrawler
 
 import (
-	"fmt"
-
 	"github.com/matthewrudy/gocrawler/scraper"
 )
 
@@ -14,12 +12,10 @@ func New(entrypoint string) Crawler {
 	return Crawler{entrypoint: entrypoint}
 }
 
-func (c *Crawler) Crawl() {
+func (c *Crawler) Crawl() scraper.Result {
 	worker := scraper.New()
 
 	request := scraper.NewRequest(c.entrypoint)
 	result := worker.Scrape(request)
-
-	fmt.Println("Crawl complete")
-	fmt.Println("Result for", c.entrypoint, result)
+	return result
 }
