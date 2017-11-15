@@ -57,7 +57,6 @@ func Test_Parser_Parse(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
 			file, err := os.Open("../" + tt.file)
 			if err != nil {
 				t.Fatalf("loading file failed: %v", err)
