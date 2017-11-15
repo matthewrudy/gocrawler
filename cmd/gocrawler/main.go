@@ -15,6 +15,6 @@ func init() {
 
 func main() {
 	crawler := gocrawler.New(*entrypoint)
-	result := crawler.Crawl()
-	fmt.Println(result)
+	crawler.Crawl()
+	fmt.Println(crawler)
 }
