@@ -1,15 +1,16 @@
 package gocrawler
 
 import (
-	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"testing"
+
+	"github.com/matthewrudy/gocrawler/testing/simple"
 )
 
 func TestCrawler_Crawl(t *testing.T) {
-	fs := http.FileServer(http.Dir("testing/simple"))
-	ts := httptest.NewServer(fs)
+	handler := simple.Handler()
+	ts := httptest.NewServer(handler)
 	defer ts.Close()
 
 	crawler := New(ts.URL)

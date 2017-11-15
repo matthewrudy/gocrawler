@@ -1,15 +1,16 @@
 package scraper
 
 import (
-	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"testing"
+
+	"github.com/matthewrudy/gocrawler/testing/simple"
 )
 
 func TestScraper_Scrape(t *testing.T) {
-	fs := http.FileServer(http.Dir("../testing/simple"))
-	ts := httptest.NewServer(fs)
+	handler := simple.Handler()
+	ts := httptest.NewServer(handler)
 	defer ts.Close()
 
 	tests := []struct {
