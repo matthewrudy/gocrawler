@@ -46,11 +46,10 @@ type Result struct {
 
 // Pretty print the result
 func (r Result) String() string {
-	str := r.Request.Uri
-	for _, asset := range r.Page.Assets {
-		str += "\n - " + asset
-	}
-	return str
+	strs := make([]string, 0, len(r.Page.Assets)+1)
+	strs = append(strs, r.Request.Uri)
+	strs = append(strs, r.Page.Assets...)
+	return strings.Join(strs, "\n - ")
 }
 
 // Page represents a parsed page
