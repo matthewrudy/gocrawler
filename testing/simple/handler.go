@@ -5,7 +5,8 @@ import (
 	"net/http"
 )
 
-// a handler to serve the simple testing example
+// Handler can be used to serve the simple testing example
+// TODO: work out how to remove requirement for "templatePath"
 func Handler(templatePath string) *http.ServeMux {
 	mux := http.NewServeMux()
 	fs := http.FileServer(http.Dir(templatePath))

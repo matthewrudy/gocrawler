@@ -1,0 +1,19 @@
+Monzo Test:
+
+This is a short practical exercise that you should spend no more than a few hours on. Feel free to ask questions directly but at the same time the exercise is intentionally left vague and we want to give you the freedom to make your own decisions in it. 
+
+We'd like you to write a simple web crawler in a programming language of your choice. Feel free to either choose one you're very familiar with or, if you'd like to learn some Go, you can also make this your first Go program! The crawler should be limited to one domain - so when crawling tomblomfield.com it would crawl all pages within the domain, but not follow external links, for example to the Facebook and Twitter accounts. Given a URL, it should output a site map, showing which static assets each page depends on, and the links between pages.
+
+Ideally, write it as you would a production piece of code. Bonus points for tests and making it as fast as possible!
+
+We will then do a quick screen sharing call to talk through your implementation. The next stage after that would be an on-site interview with the team.
+
+This exercise is not meant to test whether you can program at all, but instead you should think of it as a software design test. This means that we care less about a fancy UI or rendering the resulting sitemap nicely and more about how your program is structured, the trade-offs you've made, what behavior the program exhibits etc..
+
+There is no deadline for completing this exercise but please do let me know when you think you might get to it so we don't chase unnecessarily :) It's best to submit it through the link below, but email works too :)
+
+Looking forward to discussing your solution!
+
+Warmest,
+
+Jonas

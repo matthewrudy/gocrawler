@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// On a given page, resolve a canonical url for a provided link
+// ExpandLink takes a possible relative URI, and makes it absolute
 func ExpandLink(link, uri string) string {
 	current, err := url.Parse(uri)
 
@@ -25,12 +25,14 @@ func ExpandLink(link, uri string) string {
 	return CanonicalizeURI(link)
 }
 
+// CanonicalizeURI returns a canonical representation of a URI string
 func CanonicalizeURI(uri string) string {
 	parsed, err := url.Parse(uri)
 	if err != nil {
 		return ""
 	}
 
+	// Hack to avoid dupes "example.com" and "example.com/""
 	if parsed.Path == "" {
 		parsed.Path = "/"
 	}
@@ -38,6 +40,7 @@ func CanonicalizeURI(uri string) string {
 	return parsed.String()
 }
 
+// IsLocalLink tells you whether the link points to the current host
 func IsLocalLink(link, current string) bool {
 	currentURI, err := url.Parse(current)
 	if err != nil {
