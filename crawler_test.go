@@ -45,7 +45,7 @@ func TestCrawler_Crawl(t *testing.T) {
 	}
 
 	if len(crawler.Results) != len(tests) {
-		t.Errorf("unexpected crawler result count:", len(crawler.Results))
+		t.Errorf("unexpected crawler result count: %v", len(crawler.Results))
 	}
 
 	for _, tt := range tests {
